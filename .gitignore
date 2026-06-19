@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# AI
+.claude/
+
+# Databases
+*.duckdb
+*.duckdb-wal
+
+# Logs
+logs/
+*.log
+
+# Reports
+reports/
+
+# Notebooks
+*.ipynb
+notebooks/
+
+# Large raw datasets
+dataset/
+data/raw/
+
+# Generated data
+data/sample/
+data/processed/
+
+# IDE
+.vscode/
+.idea/
