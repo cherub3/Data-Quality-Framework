@@ -173,7 +173,7 @@ def generate_control_test_results():
 
                 rows.append({
                     "test_id": "TEST-%05d" % test_id,
-                    "test_date": test_date.isoformat(),
+                    "test_date": test_date,
                     "dataset_id": ds_id,
                     "rule_id": rule_id,
                     "total_records": total_records,
@@ -194,7 +194,7 @@ def generate_control_test_results():
 
 def generate_exceptions(test_df):
     today = datetime.today().date()
-    recent = test_df[test_df["test_date"] >= (today - timedelta(days=7)).isoformat()]
+    recent = test_df[test_df["test_date"] >= (today - timedelta(days=7))]
     exceptions = []
     exc_id = 1
 
@@ -288,7 +288,7 @@ def generate_watchlist(test_df):
                  "DS-005": 0.8, "DS-006": 1.2, "DS-007": 0.4, "DS-008": 0.3,
                  "DS-009": 2.1, "DS-010": 0.6, "DS-011": 0.2, "DS-012": 0.1, "DS-013": 0.1}
 
-    cutoff = (today - timedelta(days=15)).isoformat()
+    cutoff = today - timedelta(days=15)
 
     for ds_id in test_df["dataset_id"].unique():
         ds = get_dataset_by_id(ds_id)
@@ -443,7 +443,7 @@ def generate_remediation(exceptions_df, test_df):
 
 def compute_data_trust_scores(test_df, watchlist_df):
     today = datetime.today().date()
-    recent = test_df[test_df["test_date"] >= (today - timedelta(days=7)).isoformat()]
+    recent = test_df[test_df["test_date"] >= (today - timedelta(days=7))]
     domain_scores = []
 
     domains = list(set(d["domain"] for d in DATA_INVENTORY))
