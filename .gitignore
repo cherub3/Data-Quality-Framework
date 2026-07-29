@@ -18,8 +18,7 @@ logs/
 reports/
 
 # Notebooks
-*.ipynb
-notebooks/
+.ipynb_checkpoints/
 
 # Large raw datasets
 dataset/
@@ -32,3 +31,13 @@ data/processed/
 # IDE
 .vscode/
 .idea/
+
+# Resume/Interview prep (not project deliverables)
+RESUME_BULLET.md
+INTERVIEW_PREP_OBJECTIONS.md
+docs/RESUME_ASSETS.md
+docs/interview_prep.md
+docs/resume_and_github.md
+
+# Comprehensive report (too polished, raises suspicion)
+docs/DATA_QUALITY_PROJECT_REPORT.docx

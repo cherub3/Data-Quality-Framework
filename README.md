@@ -89,6 +89,8 @@ streamlit run dashboard/app.py
 
 The dashboard is available at `http://localhost:8501`.
 
+> **Note:** this repo also contains an earlier, separate subsystem (`run_pipeline.py`, `src/checks.py`, `src/scorer.py`, `warehouse/dq_warehouse.duckdb`) that runs event-level QA checks against a different sample dataset. It is unrelated to the governance framework above — always use `python src/pipeline.py` (not the root-level `run_pipeline.py`) to run this project.
+
 ---
 
 ## Project Structure
@@ -108,7 +110,23 @@ The dashboard is available at `http://localhost:8501`.
 │   ├── KEY_FINDINGS.md
 │   ├── MONTHLY_GOVERNANCE_REVIEW.md
 │   ├── INTERVIEW_NOTES.md
-│   └── RESUME_ASSETS.md
+│   ├── RESUME_ASSETS.md
+│   └── DISCOVERY_NARRATIVE.md          # Improvement 1
+├── sql/
+│   └── v2_rebuild/                     # Improvement 4 — SQL rewritten from first principles
+│       ├── 01_control_test_execution.sql
+│       ├── 02_dq_watchlist_signals.sql
+│       ├── 03_data_trust_score.sql
+│       ├── 04_remediation_sla_tracking.sql
+│       └── SQL_COMPARISON.md
+├── dashboard/
+│   ├── app.py                          # Streamlit 5-page dashboard
+│   ├── data/                           # CSV exports for the Power BI build
+│   ├── DASHBOARD_BUILD_GUIDE.md        # Improvement 5
+│   └── dashboard_preview.html          # Improvement 5
+├── GOVERNANCE_RECOMMENDATION_MEMO.md   # Improvement 2
+├── RESUME_BULLET.md                    # Improvement 2
+├── INTERVIEW_PREP_OBJECTIONS.md        # Improvement 3
 ├── requirements.txt
 └── README.md
 ```
@@ -121,7 +139,7 @@ The dashboard is available at `http://localhost:8501`.
 |---|---|
 | `data_inventory` | 13 datasets with ownership and criticality metadata |
 | `control_rulebook` | 30 governance controls with thresholds and severity |
-| `control_test_results` | 30-day daily test history (~1,200+ rows) |
+| `control_test_results` | 30-day daily test history (1,350 rows) |
 | `exceptions` | Auto-detected critical failures and regulatory issues |
 | `dq_watchlist` | Early-warning dataset monitoring with trend classification |
 | `remediation_tickets` | Issue lifecycle tracking with SLA and root cause |
@@ -134,9 +152,14 @@ The dashboard is available at `http://localhost:8501`.
 
 **Why a Data Quality Watchlist?**
 Standard control testing catches failures after they occur. The Watchlist monitors three trend
-signals over a rolling window — null rate, duplicate rate, and control failure rate — to detect
-deterioration 5–10 days before a control fails. This mirrors how governance teams in banks operate:
-they want early signals, not post-failure alerts.
+signals over a rolling window — null rate, duplicate rate, and control failure rate — designed to
+surface deterioration before it reaches a hard control failure. This mirrors how governance teams
+in banks operate: they want early signals, not post-failure alerts. The specific lead time this
+buys is a design intent, not a backtested number — `dq_watchlist` stores a point-in-time snapshot
+rather than dated daily history, so a claim like "N days early" can't be verified against this
+warehouse's data. See [`docs/DISCOVERY_NARRATIVE.md`](docs/DISCOVERY_NARRATIVE.md) and
+[`INTERVIEW_PREP_OBJECTIONS.md`](INTERVIEW_PREP_OBJECTIONS.md) Q6 for what the data does and
+doesn't support.
 
 **Why a Data Trust Score?**
 A Chief Data Officer does not need to read 30 control results. They need one number. The Data Trust
@@ -161,3 +184,17 @@ BigQuery, or Databricks in a production environment.
 | [MONTHLY_GOVERNANCE_REVIEW.md](docs/MONTHLY_GOVERNANCE_REVIEW.md) | Sample board governance report |
 | [INTERVIEW_NOTES.md](docs/INTERVIEW_NOTES.md) | Layer-by-layer interview answers and 30-second explanations |
 | [RESUME_ASSETS.md](docs/RESUME_ASSETS.md) | CV bullets, LinkedIn description, portfolio narrative |
+
+---
+
+## Interview & Governance Deep-Dive
+
+This project includes five hardening deliverables prepared for senior-level interviews:
+
+1. **Discovery Narrative** ([docs/DISCOVERY_NARRATIVE.md](docs/DISCOVERY_NARRATIVE.md)) — the exploration journey from naive null/duplicate detection to the full 8-layer governance framework, grounded in real pipeline output.
+2. **Governance Recommendation Memo** ([GOVERNANCE_RECOMMENDATION_MEMO.md](GOVERNANCE_RECOMMENDATION_MEMO.md)) — business-impact case for the framework, plus a resume bullet ([RESUME_BULLET.md](RESUME_BULLET.md)) drawn from it.
+3. **Objection Prep** ([INTERVIEW_PREP_OBJECTIONS.md](INTERVIEW_PREP_OBJECTIONS.md)) — 15 anticipated hard questions with data-backed, honestly-scoped answers (including named limitations).
+4. **SQL v2 Rebuild** ([sql/v2_rebuild/](sql/v2_rebuild/)) — governance logic rewritten from first principles in pure SQL and reconciled against the production pipeline's output ([SQL_COMPARISON.md](sql/v2_rebuild/SQL_COMPARISON.md)).
+5. **Dashboard Build Guide** ([dashboard/DASHBOARD_BUILD_GUIDE.md](dashboard/DASHBOARD_BUILD_GUIDE.md), [dashboard/dashboard_preview.html](dashboard/dashboard_preview.html)) — a Power BI build spec plus a static HTML preview.
+
+All figures cited in these documents are pulled live from `data/warehouse/governance.duckdb` and are illustrative/synthetic — they describe a simulated banking environment, not a real one. The pipeline is seeded, so the figures reproduce exactly on re-run (only absolute dates slide forward). See [project_metrics.md](project_metrics.md) for the single source of truth on every headline number, the tested reproducibility breakdown, and the project's known limitations.

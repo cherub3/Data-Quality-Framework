@@ -1,0 +1,11 @@
+domain,trust_score,trust_category,avg_control_effectiveness,dataset_count
+Operations,81.0,Monitor,90.0,3
+Sales,80.0,Monitor,83.0,1
+Transaction,83.0,Monitor,86.0,1
+Finance,98.9,Trusted,99.9,1
+Reference,92.3,Trusted,98.3,2
+HR,95.7,Trusted,98.7,1
+Risk,94.1,Trusted,95.1,1
+Customer,93.8,Trusted,95.8,2
+Product,96.9,Trusted,97.9,1
+Enterprise (Overall),90.6,Trusted,93.9,13

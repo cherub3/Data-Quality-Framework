@@ -1,7 +1,21 @@
 """
 run_pipeline.py
 ---------------
-Single entry point for the Data Quality Framework.
+NOTE: this file belongs to a SEPARATE, earlier subsystem (event-level QA checks
+against the Retail Rocket ecommerce dataset -- src/checks.py, src/scorer.py,
+warehouse/dq_warehouse.duckdb). It is NOT the Enterprise Data Quality &
+Governance Framework described in README.md.
+
+To run the governance framework (13 datasets, 30 controls, Data Trust Score,
+the dashboard, and everything else documented in README.md / docs/), use:
+
+    python src/pipeline.py
+
+That is the correct entry point -- see README.md "Quick Start", step 2.
+
+---
+
+Single entry point for the (separate) event-level Data Quality Framework below.
 
 Usage:
   python run_pipeline.py                      # runs on sample events data

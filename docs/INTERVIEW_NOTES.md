@@ -116,8 +116,13 @@ generates a watchlist reason and a recommended action for every flagged dataset.
 
 **Business Value**
 This is the most valuable layer in the framework. Traditional monitoring catches failures after they
-happen. The watchlist catches the signal 5–10 days before a failure occurs, giving the team time to
-investigate and remediate before the issue reaches a regulatory report or executive dashboard.
+happen. The watchlist is designed to surface deterioration before it reaches a hard control failure,
+giving the team time to investigate and remediate before the issue reaches a regulatory report or
+executive dashboard. The specific lead time this buys is a design intent, not a backtested number —
+`dq_watchlist` stores a point-in-time snapshot, not dated daily history, so a claim like "N days
+early" can't be verified against this warehouse's data. What *is* verified: 100% of currently open
+exceptions occur on datasets the watchlist had already flagged before the exception was logged (see
+`docs/DISCOVERY_NARRATIVE.md` and `INTERVIEW_PREP_OBJECTIONS.md` Q6).
 
 **30-Second Explanation**
 "The Data Quality Watchlist is an early-warning system. Instead of waiting for a control to fail,

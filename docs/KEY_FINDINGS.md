@@ -59,34 +59,41 @@ Regulatory exposure eliminated. Audit log updated with documented exception and 
 
 ---
 
-## Finding 3 — Watchlist Early Warning Validated for Three Datasets
+## Finding 3 — Watchlist Early Warning: Validated by Coverage, Not by a Backtested Lead Time
 
 **Current Situation**
 
-The Data Quality Watchlist identified three datasets showing deteriorating trend signals across null
-rate, duplicate rate, and control failure rate — before any downstream reporting impact was observed.
-These datasets were flagged on the Watchlist 5–7 days before they would have triggered a failed
-control in the traditional monitoring cycle.
+The Data Quality Watchlist currently flags 8 of 13 datasets as "Watchlist" and 5 as "Monitor" —
+13 of 13 datasets under some form of active surveillance, none fully "Clear." Joining exceptions
+to watchlist status directly (`sql/v2_rebuild/02_dq_watchlist_signals.sql`) shows all 42 open
+exceptions belong to datasets already carrying a Watchlist or Monitor flag — zero originated from
+a dataset with no active signal.
 
-The three watchlisted datasets are in the Sales, Operations, and Transaction domains, all of which
-feed into executive reporting.
+**Honest correction to the previous version of this finding:** an earlier draft of this document
+claimed datasets "were flagged on the Watchlist 5–7 days before they would have triggered a failed
+control." That specific lead-time number cannot be backtested against this warehouse's data —
+`dq_watchlist` stores a single point-in-time snapshot (13 rows, one per dataset), not dated daily
+history, so there is no stored "date this dataset was first flagged" to diff against a later
+exception date. See [`INTERVIEW_PREP_OBJECTIONS.md`](../INTERVIEW_PREP_OBJECTIONS.md) Q6 for the
+full explanation. The watchlist's real, verifiable value is coverage (100% of exceptions occur on
+datasets already under surveillance), not a specific number of days of advance warning.
 
 **Business Risk**
 
-Without the early-warning system, these quality issues would have been undetected until they
-appeared in executive or regulatory reports — at which point remediation would require urgent
-retroactive corrections rather than proactive fixes.
+Without the early-warning system, quality issues would only surface via hard control failures,
+with no visibility into gradual, multi-signal deterioration ahead of that point.
 
 **Recommendation**
 
-This finding validates the core value of the Data Quality Watchlist layer. Maintain the current
-monitoring cadence and ensure Data Stewards review the Watchlist dashboard daily. No additional
-infrastructure investment required.
+Maintain the current monitoring cadence and ensure Data Stewards review the Watchlist dashboard
+daily. To make a real backtested lead-time claim possible, the watchlist would need to retain
+dated daily history instead of a single snapshot — a scoped design change, not implemented here.
 
 **Expected Impact**
 
-Sustained use of the Watchlist layer is expected to reduce the frequency of critical exceptions by
-catching issues 5–10 days earlier in the quality lifecycle.
+Sustained use of the Watchlist layer is expected to keep exception detection ahead of hard control
+failures, consistent with the 100% coverage figure above — a design-intent claim, explicitly not a
+backtested "N days earlier" claim.
 
 ---
 
@@ -94,26 +101,39 @@ catching issues 5–10 days earlier in the quality lifecycle.
 
 **Current Situation**
 
-Analysis of the remediation ticket backlog reveals that a proportion of High and Critical severity
-tickets exceeded their defined SLA (1 day for Critical, 3 days for High). SLA breach rate across
-the current ticket population is approximately 20–30% of active tickets.
+Analysis of the remediation ticket backlog (live query against `remediation_tickets`) shows the
+real SLA breach rate is **50.0% (21 of 42 tickets)** — not the "20–30%" an earlier draft of this
+document estimated. By severity: Critical 52.6% (10/19), **High 73.3% (11/15)**, Medium 0% (0/8).
+
+**Counterintuitive detail:** High-severity tickets (3-day SLA) breach *more* than Critical (1-day
+SLA), despite the looser deadline. The cause isn't resolution speed — tickets that do resolve
+average 1.0 day regardless of severity — it's that only 13.3% of High tickets have ever been
+resolved at all, vs. 31.6% of Critical. Teams appear to triage Critical first and let High sit
+unworked, independent of its SLA window. See `INTERVIEW_PREP_OBJECTIONS.md` Q16.
+
+*(Figures are live from `data/warehouse/governance.duckdb`. The pipeline is seeded, so these
+reproduce exactly on re-run. One caveat specific to SLA: `sla_breach` is written once at
+pipeline-run-time and not re-evaluated, so it drifts from live truth as calendar time passes —
+see `sql/v2_rebuild/SQL_COMPARISON.md` file 04.)*
 
 **Business Risk**
 
-SLA breaches on Critical tickets indicate that resolution processes are not operating at the speed
-required by the data governance policy. This creates audit risk: if regulatory datasets remain
-unresolved beyond their SLA, this becomes a documented governance failure.
+A 50% SLA breach rate — and a worse rate specifically on High-severity tickets — indicates
+resolution processes are not operating at the speed the governance policy requires. This creates
+audit risk: if regulatory datasets remain unresolved beyond their SLA, this becomes a documented
+governance failure.
 
 **Recommendation**
 
-Review escalation protocols for Critical and High severity tickets. Consider implementing automated
-Slack/email notifications when a ticket approaches 50% of its SLA without a status change to
-In Progress. Review team capacity for the Data Engineering and Source System teams.
+Review escalation protocols for Critical and High severity tickets, with specific attention to why
+High tickets are worked so much less often than Critical. Consider a 24-hour acknowledgment
+requirement for High tickets (see the Priority Stack in `GOVERNANCE_RECOMMENDATION_MEMO.md`).
+Review team capacity for the Data Engineering and Source System teams.
 
 **Expected Impact**
 
-Bringing SLA compliance above 95% would eliminate the audit risk associated with unresolved Critical
-tickets and demonstrate a mature governance operating model.
+Bringing SLA compliance above 95% would eliminate the audit risk associated with unresolved
+Critical and High tickets and demonstrate a mature governance operating model.
 
 ---
 

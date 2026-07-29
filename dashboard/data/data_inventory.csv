@@ -1,0 +1,14 @@
+dataset_id,dataset_name,domain,category,owner,steward,refresh_frequency,source_system,regulatory_criticality
+DS-001,Customer Master,Customer,Regulatory Critical,Head of Customer Data,Customer Data Steward,Daily,CRM,High
+DS-002,Transaction Ledger,Transaction,Regulatory Critical,Head of Finance,Finance Data Steward,Intraday,Core Banking,High
+DS-003,Risk Exposure,Risk,Regulatory Critical,Chief Risk Officer,Risk Data Steward,Daily,Risk Engine,High
+DS-004,General Ledger,Finance,Regulatory Critical,CFO,GL Data Steward,Daily,ERP,High
+DS-005,Product Master,Product,Business Critical,Head of Product,Product Data Steward,Weekly,PMS,Medium
+DS-006,Sales Performance,Sales,Business Critical,Head of Sales,Sales Data Steward,Daily,Salesforce,Medium
+DS-007,Customer Channels,Customer,Business Critical,Head of Digital,Digital Data Steward,Daily,Digital Hub,Medium
+DS-008,Branch Performance,Operations,Business Critical,Head of Retail Banking,Branch Data Steward,Weekly,Branch MIS,Medium
+DS-009,Inventory,Operations,Operational Critical,Operations Manager,Ops Data Steward,Daily,OMS,Low
+DS-010,Orders,Operations,Operational Critical,Operations Manager,Ops Data Steward,Daily,OMS,Low
+DS-011,Resource Allocation,HR,Operational Critical,Head of HR,HR Data Steward,Weekly,HRMS,Low
+DS-012,Branch Reference,Reference,Reference Data,Data Governance Office,Ref Data Steward,Monthly,MDM,Low
+DS-013,Product Reference,Reference,Reference Data,Data Governance Office,Ref Data Steward,Monthly,MDM,Low

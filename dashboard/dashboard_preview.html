@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Governance Dashboard Preview</title>
+<style>
+  :root {
+    --navy: #0b2545;
+    --navy-2: #13315c;
+    --green: #2e7d32;
+    --amber: #e5a000;
+    --red: #c62828;
+    --grey: #9aa5b1;
+    --bg: #f4f6f9;
+    --card-bg: #ffffff;
+    --text: #1c2733;
+    --muted: #5b6b7c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 20px 28px;
+  }
+  header h1 { margin: 0; font-size: 1.4rem; }
+  header p { margin: 4px 0 0; color: #b9c6d6; font-size: 0.85rem; }
+  .wrap { padding: 20px; max-width: 1200px; margin: 0 auto; }
+  .kpi-row { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .kpi { background: var(--card-bg); border-radius: 8px; padding: 14px 20px; flex: 1; min-width: 160px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .kpi .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .kpi .value { font-size: 1.6rem; font-weight: 600; margin-top: 4px; }
+  .kpi.overdue .value { color: var(--red); }
+  .kpi.watchlist .value { color: var(--amber); }
+  .grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px; }
+  .card { background: var(--card-bg); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow-x: auto; }
+  .card h2 { margin: 0 0 12px; font-size: 1rem; color: var(--navy-2); }
+  .takeaway { margin-top: 10px; font-size: 0.82rem; color: var(--muted); line-height: 1.4; border-top: 1px solid #e5e9ee; padding-top: 8px; }
+  .full { grid-column: 1 / -1; }
+  svg text { font-family: inherit; }
+  .legend { display: flex; gap: 14px; font-size: 0.78rem; margin-top: 8px; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12181f; --card-bg: #1c2530; --text: #e6ebf1; --muted: #93a1b0; --navy-2: #7fa8e0; }
+    header { background: #08152b; }
+  }
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Enterprise Data Quality &amp; Governance Dashboard</h1>
+  <p>Live figures from data/warehouse/governance.duckdb &middot; illustrative/synthetic (seeded &mdash; reproducible on re-run)</p>
+</header>
+<div class="wrap">
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="label">Enterprise Trust Score</div><div class="value">90.6 / 100</div></div>
+    <div class="kpi"><div class="label">Control Pass Rate (30d)</div><div class="value">20.1%</div></div>
+    <div class="kpi overdue"><div class="label">Overdue Tickets</div><div class="value">21 / 42</div></div>
+    <div class="kpi watchlist"><div class="label">Watchlist Datasets</div><div class="value">8 / 13</div></div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>Chart 1 &middot; Data Trust Score Gauge</h2>
+      <svg viewBox="0 0 240 150" width="100%" height="150">
+        <path d="M 20 130 A 100 100 0 0 1 220 130" fill="none" stroke="#e5e9ee" stroke-width="18" />
+        <path d="M 20 130 A 100 100 0 0 1 90 34" fill="none" stroke="var(--red)" stroke-width="18" />
+        <path d="M 90 34 A 100 100 0 0 1 165 34" fill="none" stroke="var(--amber)" stroke-width="18" />
+        <path d="M 165 34 A 100 100 0 0 1 220 130" fill="none" stroke="var(--green)" stroke-width="18" />
+        <!-- needle at 90.6/100 -> angle from 180deg(left) to 0deg(right) -->
+        <line x1="120" y1="130" x2="212" y2="55" stroke="#1c2733" stroke-width="3" />
+        <circle cx="120" cy="130" r="6" fill="#1c2733" />
+        <text x="120" y="145" text-anchor="middle" font-size="18" font-weight="600" fill="var(--text)">90.6</text>
+      </svg>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--red)"></span>At Risk &lt;75</span>
+        <span><span class="swatch" style="background:var(--amber)"></span>Monitor 75-89</span>
+        <span><span class="swatch" style="background:var(--green)"></span>Trusted 90+</span>
+      </div>
+      <div class="takeaway">Enterprise Trust Score: 90.6/100 (Trusted) — composed of 93.9 avg control effectiveness minus watchlist/monitor penalties.</div>
+    </div>
+
+    <div class="card">
+      <h2>Chart 2 &middot; 30-Day Control Pass Rate Trend</h2>
+      <svg viewBox="0 0 640 180" width="100%" height="180" id="trendSvg">
+        <line x1="40" y1="10" x2="40" y2="150" stroke="#c7cfd8" stroke-width="1" />
+        <line x1="40" y1="150" x2="620" y2="150" stroke="#c7cfd8" stroke-width="1" />
+        <text x="10" y="14" font-size="10" fill="var(--muted)">30%</text>
+        <text x="10" y="82" font-size="10" fill="var(--muted)">15%</text>
+        <text x="10" y="154" font-size="10" fill="var(--muted)">0%</text>
+        <!-- target line at 85% -->
+        <line x1="40" y1="14" x2="620" y2="14" stroke="var(--grey)" stroke-width="1" stroke-dasharray="4,4" />
+        <text x="560" y="11" font-size="9" fill="var(--muted)">target 85%</text>
+        <polyline fill="none" stroke="var(--amber)" stroke-width="2.5" points="
+          40,111 60,98 80,105 100,105 120,90 140,111 160,105 180,98 200,105 220,90 240,90 260,111
+          280,105 300,105 320,98 340,98 360,98 380,98 400,90 420,72 440,90 460,72 480,98 500,98
+          520,90 540,90 560,79 580,105 600,105 620,90" />
+        <text x="330" y="170" text-anchor="middle" font-size="10" fill="var(--muted)">2026-05-21 → 2026-06-19 (30 days)</text>
+      </svg>
+      <div class="takeaway">Control pass rate ranged 15.6%–26.7% over 30 days (avg 20.1%, 272/1,350 tests) — never approached the 85% target; flat/noisy around 20%, no clear improving trend.</div>
+    </div>
+
+    <div class="card full">
+      <h2>Chart 3 &middot; Remediation SLA Compliance by Severity</h2>
+      <svg viewBox="0 0 640 190" width="100%" height="190">
+        <!-- Critical: resolved 6, overdue 10, open 3 -> total 19 -->
+        <!-- High: resolved 2, overdue 11, open 2 -> total 15 -->
+        <!-- Medium: resolved 2, overdue 0, open 6 -> total 8 -->
+        <!-- bar width scale: 8px per ticket -->
+        <g transform="translate(120,20)">
+          <text x="-10" y="16" text-anchor="end" font-size="12" fill="var(--text)">Critical (19)</text>
+          <rect x="0" y="2" width="48" height="24" fill="var(--green)" />
+          <rect x="48" y="2" width="80" height="24" fill="var(--red)" />
+          <rect x="128" y="2" width="24" height="24" fill="var(--grey)" />
+          <text x="24" y="19" text-anchor="middle" font-size="11" fill="white">6</text>
+          <text x="88" y="19" text-anchor="middle" font-size="11" fill="white">10</text>
+          <text x="140" y="19" text-anchor="middle" font-size="11" fill="white">3</text>
+        </g>
+        <g transform="translate(120,60)">
+          <text x="-10" y="16" text-anchor="end" font-size="12" fill="var(--text)">High (15)</text>
+          <rect x="0" y="2" width="16" height="24" fill="var(--green)" />
+          <rect x="16" y="2" width="88" height="24" fill="var(--red)" />
+          <rect x="104" y="2" width="16" height="24" fill="var(--grey)" />
+          <text x="8" y="19" text-anchor="middle" font-size="11" fill="white">2</text>
+          <text x="60" y="19" text-anchor="middle" font-size="11" fill="white">11</text>
+          <text x="112" y="19" text-anchor="middle" font-size="11" fill="white">2</text>
+        </g>
+        <g transform="translate(120,100)">
+          <text x="-10" y="16" text-anchor="end" font-size="12" fill="var(--text)">Medium (8)</text>
+          <rect x="0" y="2" width="16" height="24" fill="var(--green)" />
+          <rect x="16" y="2" width="48" height="24" fill="var(--grey)" />
+          <text x="8" y="19" text-anchor="middle" font-size="11" fill="white">2</text>
+          <text x="40" y="19" text-anchor="middle" font-size="11" fill="white">6</text>
+        </g>
+      </svg>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--green)"></span>Resolved on-time</span>
+        <span><span class="swatch" style="background:var(--red)"></span>Overdue (SLA breach)</span>
+        <span><span class="swatch" style="background:var(--grey)"></span>Open, on track</span>
+      </div>
+      <div class="takeaway">Critical: 6 resolved, 10 overdue, 3 open on-track. High: 2 resolved, 11 overdue, 2 open on-track. Medium: 2 resolved, 0 overdue, 6 open on-track. Overdue concentration is worst in Critical/High severity — exactly where SLA enforcement matters most.</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

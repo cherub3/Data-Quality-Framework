@@ -24,7 +24,7 @@ the Data Quality Watchlist.
 | Enterprise Data Trust Score | See dashboard — Executive Overview |
 | Datasets monitored | 13 |
 | Controls executed | 30 |
-| Test executions (30-day window) | ~1,200+ |
+| Test executions (30-day window) | 1,350 |
 | Datasets on Watchlist | See dashboard |
 | Critical exceptions detected | See dashboard |
 | Remediation tickets raised | See dashboard |

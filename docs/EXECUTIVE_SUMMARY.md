@@ -31,7 +31,7 @@ This framework answers the governance question, not just the quality question.
   Reference domains
 - **8 DuckDB tables** storing inventory, controls, test history, exceptions, watchlist, tickets,
   trust scores, and maturity scores
-- **30-day control testing history** with approximately 1,200+ test executions
+- **30-day control testing history** with 1,350 test executions
 
 ### Governance Layers
 - **Layer 1 — Data Inventory:** 13 datasets with named owners, stewards, source systems, and
@@ -65,6 +65,18 @@ Five-page Streamlit dashboard:
 - MONTHLY_GOVERNANCE_REVIEW.md — Board-level governance report
 - INTERVIEW_NOTES.md — Layer-by-layer interview answers and 30-second explanations
 - RESUME_ASSETS.md — Bullet points and project summary for CV and LinkedIn
+
+---
+
+## What We Found — In Plain Terms
+
+Beyond building the framework, we stress-tested it against its own output. Three findings worth knowing about in business language, no formulas required:
+
+1. **A dataset scored "safe" while failing everything.** Our Risk Exposure dataset passed every governance check on paper — a 94.1/100 "Trusted" rating — while failing every single automated data quality test we ran against it, every day, for a month straight. That happened because our scoring method averages "how close to passing" rather than counting "did it actually pass," which let a chronic, total failure hide behind a healthy-looking number. We've designed and proven out a fix.
+2. **High-priority issues are being worked less than critical ones, not more slowly.** Once someone starts working a ticket, high-priority and critical-priority issues get fixed at the same pace (about a day each). The real problem: barely 1 in 8 high-priority tickets ever gets worked at all, versus roughly 1 in 3 critical tickets — even though high-priority issues get 3 days instead of 1. Teams are triaging critical first and letting high-priority sit, regardless of the deadline.
+3. **25 issues have failed every day for a month with no escalation.** Our process currently treats a data quality problem that's failed once the same as one that's failed continuously for 30 days — both get exactly one ticket, with nothing that automatically raises the alarm as a problem persists. We've proposed a fix: any issue failing for a full week straight automatically gets bumped up a priority level.
+
+*(These figures are computed live from the project's own test database and are illustrative — see `project_metrics.md` for the full numbers and a note on why they shift slightly each time the pipeline reruns.)*
 
 ---
 
